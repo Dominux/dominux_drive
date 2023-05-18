@@ -1,1 +1,7 @@
 /backend/target
+
+.DS_Store
+
+/.env
+/Dockerfile
+/docker-compose.yml
