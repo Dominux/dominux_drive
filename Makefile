@@ -1,5 +1,5 @@
 run_dev:
-	rm .env Dockerfile docker-compose.yml || true &&\
+	rm .env *.Dockerfile docker-compose.yml || true &&\
 	cp ./deploy/dev/* . &&\
 	cp ./deploy/dev/.env . &&\
 	docker compose down --remove-orphans &&\
