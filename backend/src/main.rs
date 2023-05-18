@@ -1,5 +1,7 @@
 use axum::{routing::get, Router};
 
+mod apps;
+
 #[tokio::main]
 async fn main() {
     // build our application with a single route
