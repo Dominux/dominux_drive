@@ -1,30 +1,25 @@
-use sqlx::Pool;
+use sqlx::PgPool;
 
 use super::models::{InUser, User};
 
-pub struct UsersRepository<'a, T>
-where
-    T: sqlx::Database,
-{
-    pool: &'a Pool<T>,
+pub struct UsersRepository<'a> {
+    pool: &'a PgPool,
 }
 
-impl<'a, T> UsersRepository<'a, T>
-where
-    T: sqlx::Database,
-{
-    pub fn new(pool: &'a Pool<T>) -> Self {
+impl<'a> UsersRepository<'a> {
+    pub fn new(pool: &'a PgPool) -> Self {
         Self { pool }
     }
 
     /// Creates new user
     pub async fn create(self, user: InUser) -> anyhow::Result<User> {
-        let rec = sqlx::query("INSERT INTO users VALUES ( $1 ) RETURNING id")
-            .bind(user.name)
+        let (id,): (i64,) = sqlx::query_as("INSERT INTO users VALUES ( $1, $2 ) RETURNING id")
+            .bind(&user.name)
+            .bind(&user.password)
             .fetch_one(self.pool)
             .await?;
 
-        let user = User::from_in_user(user, rec.id);
+        let user = User::from_in_user(user, id as usize);
         Ok(user)
     }
 }
